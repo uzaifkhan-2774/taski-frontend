@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://taski-backend-5.onrender.com/api"
+  baseURL: import.meta.env.VITE_API_URL || 'https://taski-backend-5.onrender.com/api'
 })
 
 api.interceptors.request.use((config) => {
@@ -13,7 +13,8 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    // Sirf /auth/me ke alawa 401 pe logout karo
+    if (err.response?.status === 401 && !err.config.url.includes('/auth/me') && !err.config.url.includes('/auth/login')) {
       localStorage.removeItem('token')
       window.location.href = '/login'
     }

@@ -26,13 +26,22 @@ export const fetchMe = createAsyncThunk('auth/fetchMe', async (_, { rejectWithVa
     const res = await api.get('/auth/me')
     return res.data
   } catch (err) {
+    // 401 pe token clear karo
+    if (err.response?.status === 401) {
+      localStorage.removeItem('token')
+    }
     return rejectWithValue(err.response?.data?.message)
   }
 })
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: { user: null, token: localStorage.getItem('token'), loading: false, error: null },
+  initialState: {
+    user: null,
+    token: localStorage.getItem('token'),
+    loading: false,
+    error: null
+  },
   reducers: {
     logout: (state) => {
       state.user = null
@@ -44,12 +53,33 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => { state.loading = true; state.error = null })
-      .addCase(login.fulfilled, (state, action) => { state.loading = false; state.user = action.payload.user; state.token = action.payload.token })
-      .addCase(login.rejected, (state, action) => { state.loading = false; state.error = action.payload })
+      .addCase(login.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload.user
+        state.token = action.payload.token
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
       .addCase(register.pending, (state) => { state.loading = true; state.error = null })
-      .addCase(register.fulfilled, (state, action) => { state.loading = false; state.user = action.payload.user; state.token = action.payload.token })
-      .addCase(register.rejected, (state, action) => { state.loading = false; state.error = action.payload })
-      .addCase(fetchMe.fulfilled, (state, action) => { state.user = action.payload })
+      .addCase(register.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload.user
+        state.token = action.payload.token
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
+      .addCase(fetchMe.fulfilled, (state, action) => {
+        state.user = action.payload
+      })
+      .addCase(fetchMe.rejected, (state) => {
+        // fetchMe fail hone par token clear karo
+        state.user = null
+        state.token = null
+      })
   },
 })
 
