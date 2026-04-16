@@ -13,8 +13,13 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    // Sirf /auth/me ke alawa 401 pe logout karo
-    if (err.response?.status === 401 && !err.config.url.includes('/auth/me') && !err.config.url.includes('/auth/login')) {
+    const url = err.config?.url || ''
+    // Sirf /me aur /auth/* ke alawa 401 pe logout karo
+    if (
+      err.response?.status === 401 &&
+      !url.includes('/me') &&
+      !url.includes('/auth/')
+    ) {
       localStorage.removeItem('token')
       window.location.href = '/login'
     }

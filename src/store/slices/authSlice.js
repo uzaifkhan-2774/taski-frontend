@@ -23,13 +23,9 @@ export const register = createAsyncThunk('auth/register', async (data, { rejectW
 
 export const fetchMe = createAsyncThunk('auth/fetchMe', async (_, { rejectWithValue }) => {
   try {
-    const res = await api.get('/auth/me')
+    const res = await api.get('/me')
     return res.data
   } catch (err) {
-    // 401 pe token clear karo
-    if (err.response?.status === 401) {
-      localStorage.removeItem('token')
-    }
     return rejectWithValue(err.response?.data?.message)
   }
 })
@@ -76,9 +72,8 @@ const authSlice = createSlice({
         state.user = action.payload
       })
       .addCase(fetchMe.rejected, (state) => {
-        // fetchMe fail hone par token clear karo
-        state.user = null
-        state.token = null
+        // fetchMe fail hone par LOGOUT MAT KARO
+        // user login session rahega
       })
   },
 })
