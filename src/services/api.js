@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://taski-backend-5.onrender.com/api'
+  baseURL: import.meta.env.VITE_API_URL || 'https://taski-backend-flbook.onrender.com/api'
 })
 
 api.interceptors.request.use((config) => {
