@@ -14,12 +14,11 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     const url = err.config?.url || ''
-    // Sirf /me aur /auth/* ke alawa 401 pe logout karo
-    if (
-      err.response?.status === 401 &&
-      !url.includes('/me') &&
-      !url.includes('/auth/')
-    ) {
+
+    const isAuthRoute = url.includes('/auth/me') || 
+                        url.includes('/auth/login') || 
+                        url.includes('/me')
+    if (err.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem('token')
       window.location.href = '/login'
     }

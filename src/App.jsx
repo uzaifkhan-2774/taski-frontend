@@ -32,7 +32,7 @@ export default function App() {
 
   useEffect(() => {
     if (token) dispatch(fetchMe())
-  }, [token, dispatch])
+  }, []) 
 
   return (
     <BrowserRouter>
